@@ -1,17 +1,17 @@
 package com.hyperativa.rest_application.converters;
 
-import com.hyperativa.rest_application.dtos.UserDto;
-import com.hyperativa.rest_application.entities.User;
+import com.hyperativa.rest_application.dtos.CardDto;
+import com.hyperativa.rest_application.entities.Card;
 import lombok.NonNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserEntityToDtoConverter implements Converter<User, UserDto> {
+public class CardEntityToDtoConverter implements Converter<Card, CardDto> {
     @Override
-    public UserDto convert(@NonNull User source) {
-        UserDto tartget = new UserDto();
+    public CardDto convert(@NonNull Card source) {
+        CardDto tartget = new CardDto();
         BeanUtils.copyProperties(source, tartget);
         return tartget;
     }

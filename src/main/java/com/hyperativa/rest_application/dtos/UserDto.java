@@ -10,9 +10,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class UserDto {
+    private Integer id;
     private String email;
     private String password;
     private String fullName;
-    private LocalDate creationDate;
+    private LocalDate createdDate;
     private LocalDate updateDate;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 }

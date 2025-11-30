@@ -1,10 +1,13 @@
-package com.hyperativa.rest_application.services;
+package com.hyperativa.rest_application.services.impl;
 
 import com.hyperativa.rest_application.converters.UserEntityToDtoConverter;
 import com.hyperativa.rest_application.dtos.UserDto;
 import com.hyperativa.rest_application.entities.User;
+import com.hyperativa.rest_application.exceptions.UserNotFoundException;
 import com.hyperativa.rest_application.repositories.UserRepository;
+import com.hyperativa.rest_application.services.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,14 +17,14 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
-    private final UserEntityToDtoConverter userConverter;
+    private final UserEntityToDtoConverter converter;
 
     public Set<UserDto> allUsers() {
         Set<UserDto> users = new HashSet<>();
 
-        userRepository.findAll().forEach(user -> users.add(userConverter.convert(user)));
+        userRepository.findAll().forEach(user -> users.add(converter.convert(user)));
 
         return users;
     }
@@ -30,6 +33,14 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final User currentUser = (User) authentication.getPrincipal();
 
-        return userConverter.convert(currentUser);
+        return converter.convert(currentUser);
+    }
+
+    public UserDto updateUser(Integer id, UserDto userDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+        BeanUtils.copyProperties(userDto, user);
+        User saved = userRepository.save(user);
+        return converter.convert(saved);
     }
 }

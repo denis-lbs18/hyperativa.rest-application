@@ -1,10 +1,11 @@
-package com.hyperativa.rest_application.services;
+package com.hyperativa.rest_application.services.impl;
 
 
 import com.hyperativa.rest_application.dtos.LoginDto;
 import com.hyperativa.rest_application.dtos.UserDto;
 import com.hyperativa.rest_application.entities.User;
 import com.hyperativa.rest_application.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,23 +14,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-public class AuthenticationService {
+@RequiredArgsConstructor
+public class AuthenticationServiceImpl implements com.hyperativa.rest_application.services.IAuthenticationService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(
-            UserRepository userRepository,
-            AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    @Override
     public User signup(UserDto input) {
         User user = User.builder()
                 .id(0)
@@ -47,6 +40,7 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
+    @Override
     public User authenticate(LoginDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
