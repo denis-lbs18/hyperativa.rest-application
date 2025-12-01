@@ -87,15 +87,14 @@ public class CardServiceImpl implements ICardService {
                         if (line.startsWith(LOTE)) {
                             chargeNumber = retrieveChargeNumber(line);
                         }
-                        CardDto card = new CardDto();
                         String candidate = line.substring(7);
                         candidate = candidate.replaceAll("\\s+", "");
                         candidate = candidate.replaceAll("\\D", "");
                         if (!candidate.isEmpty()) {
                             results.add(candidate);
                         }
-                    } catch (IndexOutOfBoundsException ignored) {
-                        logger.error(ignored);
+                    } catch (IndexOutOfBoundsException exception) {
+                        logger.error(exception);
                     }
                 }
             }

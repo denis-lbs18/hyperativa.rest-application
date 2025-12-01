@@ -32,9 +32,6 @@ class AuthenticationServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
-
     @Test
     void shouldFail_WhenSignup_ThrowsDuplicatedUserEmailException() {
         when(userRepository.findByEmail(any())).thenThrow(DuplicatedUserEmailException.class);
