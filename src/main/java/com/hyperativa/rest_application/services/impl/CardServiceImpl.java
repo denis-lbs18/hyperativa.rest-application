@@ -6,6 +6,8 @@ import com.hyperativa.rest_application.entities.Card;
 import com.hyperativa.rest_application.repositories.CardRepository;
 import com.hyperativa.rest_application.services.ICardService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,12 +15,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements ICardService {
+    private static final Logger logger = LogManager.getLogger(CardServiceImpl.class);
+
+    private static final String LOTE = "LOTE";
     private final CardRepository cardRepository;
     private final CardEntityToDtoConverter converter;
 
@@ -37,11 +44,11 @@ public class CardServiceImpl implements ICardService {
 
     @Override
     public List<CardDto> saveFromTxtFile(MultipartFile file) throws IOException {
-        List<String> extracted = extractCardNumbersFromTxt(file);
+        List<CardDto> extracted = extractCardNumbersFromTxt(file);
         List<CardDto> saved = new ArrayList<>();
-        for (String num : extracted) {
-            if (!cardRepository.existsByNumber(num)) {
-                Card card = cardRepository.save(new Card(num));
+        for (CardDto cardDto : extracted) {
+            if (!cardRepository.existsByNumber(cardDto.getNumber())) {
+                Card card = cardRepository.save(new Card(cardDto.getNumber(), cardDto.getCharge()));
                 saved.add(converter.convert(card));
             }
         }
@@ -67,26 +74,38 @@ public class CardServiceImpl implements ICardService {
         return onlyDigits.trim();
     }
 
-    private List<String> extractCardNumbersFromTxt(MultipartFile file) throws IOException {
+    private List<CardDto> extractCardNumbersFromTxt(MultipartFile file) throws IOException {
         List<String> results = new ArrayList<>();
+        String chargeNumber = "";
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
 
-                if (line.length() >= 26) {
+                if (line.startsWith("C")) {
                     try {
-                        String candidate = line.substring(7, 26);
+                        if (line.startsWith(LOTE)) {
+                            chargeNumber = retrieveChargeNumber(line);
+                        }
+                        CardDto card = new CardDto();
+                        String candidate = line.substring(7);
                         candidate = candidate.replaceAll("\\s+", "");
                         candidate = candidate.replaceAll("\\D", "");
                         if (!candidate.isEmpty()) {
                             results.add(candidate);
                         }
-                    } catch (IndexOutOfBoundsException ignored) {}
+                    } catch (IndexOutOfBoundsException ignored) {
+                        logger.error(ignored);
+                    }
                 }
             }
         }
-        // deduplicate while preserving insertion order
-        return results.stream().distinct().collect(Collectors.toList());
+
+        String finalChargeNumber = chargeNumber;
+        return results.stream().map(s -> new CardDto(s, finalChargeNumber)).collect(Collectors.toList());
+    }
+
+    private String retrieveChargeNumber(String line) {
+        return line.substring(0, 8);
     }
 }

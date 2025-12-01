@@ -1,5 +1,6 @@
 package com.hyperativa.rest_application.entities;
 
+import com.hyperativa.rest_application.converters.StringCryptoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,12 +19,22 @@ public class Card {
     private Long id;
 
     @Column(name = "number", nullable = false, unique = true, length = 64)
+    @Convert(converter = StringCryptoConverter.class)
     private String number;
+
+    @Column(name = "charge")
+    @Convert(converter = StringCryptoConverter.class)
+    private String charge;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
     public Card(String number) {
         this.number = number;
+    }
+
+    public Card(String number, String charge) {
+        this.number = number;
+        this.charge = charge;
     }
 }

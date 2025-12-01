@@ -4,6 +4,8 @@ package com.hyperativa.rest_application.services.impl;
 import com.hyperativa.rest_application.dtos.LoginDto;
 import com.hyperativa.rest_application.dtos.UserDto;
 import com.hyperativa.rest_application.entities.User;
+import com.hyperativa.rest_application.exceptions.DuplicatedUserEmailException;
+import com.hyperativa.rest_application.exceptions.UserNotFoundException;
 import com.hyperativa.rest_application.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,10 @@ public class AuthenticationServiceImpl implements com.hyperativa.rest_applicatio
 
     @Override
     public User signup(UserDto input) {
+        userRepository.findByEmail(input.getEmail()).ifPresent(user -> {
+            throw new DuplicatedUserEmailException();
+        });
+
         User user = User.builder()
                 .id(0)
                 .fullName(input.getFullName())
@@ -50,6 +56,6 @@ public class AuthenticationServiceImpl implements com.hyperativa.rest_applicatio
         );
 
         return userRepository.findByEmail(input.getEmail())
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
     }
 }

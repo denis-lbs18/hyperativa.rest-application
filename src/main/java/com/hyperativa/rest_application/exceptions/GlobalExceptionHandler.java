@@ -70,6 +70,11 @@ public class GlobalExceptionHandler {
             errorDetail.setProperty("description", "The requested user was not found");
         }
 
+        if (exception instanceof DuplicatedUserEmailException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
+            errorDetail.setProperty("description", "Email already in use");
+        }
+
         if (errorDetail == null) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
             errorDetail.setProperty("description", "Unknown internal server error.");
