@@ -1,5 +1,6 @@
 package com.hyperativa.rest_application.entities;
 
+import com.hyperativa.rest_application.converters.StringCryptoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +27,10 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String fullName;
+
+    @Column(length = 200)
+    @Convert(converter = StringCryptoConverter.class)
+    private String address;
 
     @Column(unique = true, length = 100, nullable = false)
     private String email;

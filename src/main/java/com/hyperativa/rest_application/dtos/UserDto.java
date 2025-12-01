@@ -14,6 +14,7 @@ public class UserDto {
     private String email;
     private String password;
     private String fullName;
+    private String address;
     private LocalDate createdDate;
     private LocalDate updateDate;
     private boolean accountNonExpired;

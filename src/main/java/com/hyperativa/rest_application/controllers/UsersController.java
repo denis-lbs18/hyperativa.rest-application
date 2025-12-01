@@ -1,18 +1,20 @@
 package com.hyperativa.rest_application.controllers;
 
+import com.hyperativa.rest_application.dtos.UpdateUserDto;
 import com.hyperativa.rest_application.dtos.UserDto;
-import com.hyperativa.rest_application.services.impl.UserServiceImpl;
+import com.hyperativa.rest_application.services.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.Parameter;
 
 import java.util.Set;
 
@@ -21,7 +23,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "User management endpoints")
 public class UsersController {
-    private final UserServiceImpl userService;
+    private final IUserService userService;
 
     @Operation(summary = "Get current authenticated user", description = "Returns the currently authenticated user's data")
     @ApiResponses({
@@ -61,10 +63,9 @@ public class UsersController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "User data to update",
                     required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserDto.class))
             )
-            @RequestBody UserDto userDto) {
-
+            @Valid @RequestBody UpdateUserDto userDto) {
         UserDto updatedUser = userService.updateUser(id, userDto);
         return ResponseEntity.ok(updatedUser);
     }

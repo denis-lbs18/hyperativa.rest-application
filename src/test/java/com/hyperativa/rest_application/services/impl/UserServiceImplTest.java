@@ -1,6 +1,7 @@
 package com.hyperativa.rest_application.services.impl;
 
 import com.hyperativa.rest_application.converters.UserEntityToDtoConverter;
+import com.hyperativa.rest_application.dtos.UpdateUserDto;
 import com.hyperativa.rest_application.dtos.UserDto;
 import com.hyperativa.rest_application.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.hyperativa.rest_application.builder.ConstantsBuilder.UPDATED_NAME;
+import static com.hyperativa.rest_application.builder.dtos.UserDtoBuilder.buildUpdateUserDto;
 import static com.hyperativa.rest_application.builder.entities.UserBuilder.*;
 import static com.hyperativa.rest_application.builder.dtos.UserDtoBuilder.buildUserDto;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +47,7 @@ class UserServiceImplTest {
         when(userRepository.save(any())).thenReturn(buildUpdatedUser());
         when(converter.convert(any())).thenCallRealMethod();
 
-        UserDto inputDto = buildUserDto();
+        UpdateUserDto inputDto = buildUpdateUserDto();
         inputDto.setFullName("Updated Name");
 
         UserDto updatedDto = service.updateUser(1, inputDto);
