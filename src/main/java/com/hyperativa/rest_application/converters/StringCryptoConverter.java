@@ -8,8 +8,6 @@ import org.springframework.core.env.Environment;
 
 @Converter
 public class StringCryptoConverter implements AttributeConverter<String, String> {
-    @Value("${jasypt.encryptor.password}")
-    private String password;
     private static final String ENCRYPTION_PASSWORD_PROPERTY = "jasypt.encryptor.password";
 
     private final StandardPBEStringEncryptor encryptor;

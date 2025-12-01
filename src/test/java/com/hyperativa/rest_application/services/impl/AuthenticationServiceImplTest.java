@@ -8,15 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static com.hyperativa.rest_application.builder.ConstantsBuilder.ANY_STRING;
 import static com.hyperativa.rest_application.builder.dtos.LoginDtoBuilder.buildLoginDto;
-import static com.hyperativa.rest_application.builder.entities.UserBuilder.buildUser;
 import static com.hyperativa.rest_application.builder.dtos.UserDtoBuilder.buildUserDto;
+import static com.hyperativa.rest_application.builder.entities.UserBuilder.buildUser;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
